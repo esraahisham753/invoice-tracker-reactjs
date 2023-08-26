@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Formik, Form, Field, ErrorMessage, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 
 const Container = styled.div`
   display: flex;
@@ -58,7 +58,7 @@ const RememberMeCheckbox = styled(Field)`
   margin-top: 10px;
 `;
 
-const SubmitButton = styled.input`
+const SubmitButton = styled(Field)`
   height: 40px;
   width: 100px;
   display: flex;
@@ -71,7 +71,7 @@ const SubmitButton = styled.input`
   margin-top: 40px;
 `;
 
-const ErrorLabel = styled(ErrorMessage)`
+const ErrorLabel = styled.p`
   font-size: 26px;
   color: red;
 `;
@@ -86,20 +86,25 @@ class SignInComponent extends React.Component {
   handleValidation(values) {
     const errors = {};
 
-    if (!this.state.email) {
+    if (!values.email) {
       errors.email = "Email cannot by empty";
     }
 
-    if (!this.state.password) {
+    if (!values.password) {
       errors.password = "Cannot have a password";
-    } else if (this.state.password.length < 8) {
+    } else if (values.password.length < 8) {
       errors.password = "Password should have at least 8 characters";
     }
     return errors;
   }
 
-  handleSubmit() {
-    alert(JSON.stringify(this.state));
+  handleSubmit(values, actions) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+        alert(JSON.stringify(values));
+      }, 5000);
+    });
   }
 
   render() {
@@ -113,60 +118,40 @@ class SignInComponent extends React.Component {
             onSubmit={this.handleSubmit}
             validate={this.handleValidation}
           >
-            {(props) => {
-              <Form>
-                <Label htmlFor="email">Email</Label>
-                <Field
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email"
-                />
-                <ErrorLabel name="email" />
-
-                <Label htmlFor="password"></Label>
-                <Field
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                />
-                <ErrorLabel name="email" />
-              </Form>;
-            }}
-          </Formik>
-
-          <Form onSubmit={this.handleSubmit}>
-            <Label>Email</Label>
-            <EmailInput
-              type="email"
-              value={this.state.email}
-              onChange={this.handleEmailInputChange}
-            />
-
-            {this.state.emailError && (
-              <ErrorLabel>{this.state.emailError}</ErrorLabel>
-            )}
-
-            <Label>Password</Label>
-            <PasswordInput
-              type="password"
-              value={this.state.password}
-              onChange={this.handlePasswordInputChange}
-            />
-            {this.state.passwordError && (
-              <ErrorLabel>{this.state.passwordError}</ErrorLabel>
-            )}
-            <CheckboxContainer>
-              <RememberMeCheckbox
-                type="checkbox"
-                checked={this.state.rememberMe}
-                onChange={this.handleRememberMeInputChange}
+            <SignInForm>
+              <Label htmlFor="email">Email</Label>
+              <EmailField
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
               />
-              <CheckboxLabel>Remember me</CheckboxLabel>
-            </CheckboxContainer>
+              <ErrorMessage name="email">
+                {(error) => <ErrorLabel>{error}</ErrorLabel>}
+              </ErrorMessage>
 
-            <SubmitButton type="submit" />
-          </Form>
+              <Label htmlFor="password"></Label>
+              <PasswordField
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+              />
+              <ErrorMessage name="password">
+                {(error) => <ErrorLabel>{error}</ErrorLabel>}
+              </ErrorMessage>
+              <CheckboxContainer>
+                <RememberMeCheckbox
+                  type="checkbox"
+                  name="rememberMe"
+                  id="rememberMe"
+                />
+                <CheckboxLabel>Remember me</CheckboxLabel>
+              </CheckboxContainer>
+
+              <SubmitButton type="submit" name="submit" id="submit" />
+            </SignInForm>
+          </Formik>
         </ContentContainer>
       </Container>
     );
