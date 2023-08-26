@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import styled from "styled-components";
-import * as Yup from "yub";
+import { object, string } from "yup";
 
 const Container = styled.div`
   display: flex;
@@ -62,10 +62,17 @@ const ErrorLabel = styled.span`
   color: red;
 `;
 
-const emailSchema = Yup.object().validate({
-  email: Yup.string()
+const emailSchema = object({
+  email: string()
     .email("Should enter a valid email")
     .required("email cannot be empty"),
+});
+
+const passwordSchema = object().shape({
+  password: string()
+    .required("Password cannot be empty")
+    .test("len", "Very weak", (val) => val.length > 5)
+    .test("len", "weak", (val) => val.length > 8),
 });
 
 class SignUpComponent extends React.Component {
@@ -87,15 +94,13 @@ class SignUpComponent extends React.Component {
   }
 
   validatePassword(value) {
-    if (!value) {
-      return "Password Field cannot be empty";
-    } else if (value.length < 5) {
-      return "very weak";
-    } else if (value.length < 8) {
-      return "Weak";
+    let error = undefined;
+    try {
+      passwordSchema.validateSync({ password: value });
+    } catch (validationError) {
+      error = validationError.errors[0];
     }
-
-    return undefined;
+    return error;
   }
 
   render() {
@@ -110,7 +115,7 @@ class SignUpComponent extends React.Component {
               confirmPassword: "",
             }}
             onSubmit={this.handleSubmit}
-            validate={this.handleValidation}
+            validationSchema={emailSchema}
           >
             {({ values, isSubmitting }) => {
               return (
