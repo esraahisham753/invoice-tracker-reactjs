@@ -1,7 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
 import styled from "styled-components";
-import RootComponent from "./components/RootComponent"
+import RootComponent from "./components/RootComponent";
 
 const Container = styled.div`
   display: block;
@@ -11,7 +10,7 @@ const Container = styled.div`
 function App() {
   return (
     <Container>
-      <RootComponent/>
+      <RootComponent />
     </Container>
   );
 }
