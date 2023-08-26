@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import styled from "styled-components";
+import * as Yup from "yub";
 
 const Container = styled.div`
   display: flex;
@@ -56,10 +57,16 @@ const SubmitButton = styled(Field)`
   margin-top: 40px;
 `;
 
-const ErrorLabel = styled.p`
+const ErrorLabel = styled.span`
   font-size: 26px;
   color: red;
 `;
+
+const emailSchema = Yup.object().validate({
+  email: Yup.string()
+    .email("Should enter a valid email")
+    .required("email cannot be empty"),
+});
 
 class SignUpComponent extends React.Component {
   handleSubmit(values, actions) {
@@ -91,20 +98,6 @@ class SignUpComponent extends React.Component {
     return undefined;
   }
 
-  validateConfirmPassword(value, pass) {
-    if (!value) {
-      return "Password Field cannot be empty";
-    } else if (value !== pass) {
-      return "Passwords don't match";
-    } else if (value.length < 5) {
-      return "very weak";
-    } else if (value.length < 8) {
-      return "Weak";
-    }
-
-    return undefined;
-  }
-
   render() {
     return (
       <Container>
@@ -119,7 +112,7 @@ class SignUpComponent extends React.Component {
             onSubmit={this.handleSubmit}
             validate={this.handleValidation}
           >
-            {(props) => {
+            {({ values, isSubmitting }) => {
               return (
                 <SignUpForm>
                   <Label htmlFor="email">Email</Label>
@@ -159,7 +152,7 @@ class SignUpComponent extends React.Component {
                   <SubmitButton
                     type="submit"
                     name="submit"
-                    disable={props.isSubmitting}
+                    disable={isSubmitting}
                   />
                 </SignUpForm>
               );
