@@ -29,7 +29,7 @@ const Label = styled.label`
   font-size: 24px;
 `;
 
-const SubmitButton = styled(Field)`
+const SubmitButton = styled.input`
   height: 40px;
   width: 100px;
   display: flex;
@@ -69,10 +69,37 @@ const BilledAmountField = styled(Field)`
   font-size: 24px;
 `;
 
-const CreateInvoiceSchema = null;
+const FileInputField = styled.input`
+  margin-top: 10px;
+  height: 40px;
+  font-size: 24px;
+`;
+
+const CreateInvoiceSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email can't be empty"),
+  projectName: Yup.string().required("Project name can't be empty"),
+  billedAmount: Yup.number()
+    .required("Billed amount can't be empty")
+    .min(1, "Invalid amont"),
+  rating: Yup.number().min(1, "Rating can't be empty"),
+});
 
 class CreateInvoiceComponent extends React.Component {
-  handleSubmit() {}
+  constructor(props) {
+    super(props);
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.fileInput = React.createRef(null);
+  }
+
+  handleSubmit(values, actions) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+        alert(this.fileInput.current.value);
+      }, 2000);
+    });
+  }
 
   render() {
     return (
@@ -87,37 +114,42 @@ class CreateInvoiceComponent extends React.Component {
               rating: 0,
             }}
             onSubmit={this.handleSubmit}
-            validationSchema={CreateInvoiceComponent}
+            validationSchema={CreateInvoiceSchema}
           >
-            {
-                props => (
-                    <CreateInvoiceForm>
-                        <EmailFieldInput name="email" type="email" label="client's email"/>
+            {(props) => (
+              <CreateInvoiceForm>
+                <EmailFieldInput
+                  name="email"
+                  type="email"
+                  label="client's email"
+                />
 
-                        <Label>Project Name</Label>
-                        <ProjectNameField name="projectName" type="text"/>
-                        <ErrorMessage name="projectName">
-                            {
-                                error => <ErrorLabel>{error}</ErrorLabel>
-                            }
-                        </ErrorMessage>
-                        
-                        <Label>Billed Amount</Label>
-                        <BilledAmountField name="billedAmount" type="number"/>
-                        <ErrorMessage name="billedAmount">
-                            {
-                                error => <ErrorLabel>{error}</ErrorLabel>
-                            }
-                        </ErrorMessage>
+                <Label>Project Name</Label>
+                <ProjectNameField name="projectName" type="text" />
+                <ErrorMessage name="projectName">
+                  {(error) => <ErrorLabel>{error}</ErrorLabel>}
+                </ErrorMessage>
 
-                        <RatingField name="rating"  label={"Project Rating"}/>
-                        <SubmitButton type=""></SubmitButton>
-                    </CreateInvoiceForm>
-                )
-            }
+                <Label>Billed Amount</Label>
+                <BilledAmountField name="billedAmount" type="number" />
+                <ErrorMessage name="billedAmount">
+                  {(error) => <ErrorLabel>{error}</ErrorLabel>}
+                </ErrorMessage>
+
+                <RatingField name="rating" label={"Project Rating"} />
+                <FileInputField
+                  type="file"
+                  name="billFile"
+                  ref={this.fileInput}
+                />
+                <SubmitButton type="submit" disabled={props.isSubmitting} />
+              </CreateInvoiceForm>
+            )}
           </Formik>
         </ContentContainer>
       </Container>
     );
   }
 }
+
+export default CreateInvoiceComponent;

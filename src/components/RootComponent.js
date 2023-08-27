@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SignInComponent from "./SignInComponent";
 import SignUpComponent from "./SignUpComponent";
+import CreateInvoiceComponent from "./CreateInvoiceComponent";
 
 class RootComponent extends React.Component {
   render() {
@@ -20,6 +21,13 @@ class RootComponent extends React.Component {
             path={"/signup"}
             render={() => {
               return <SignUpComponent />;
+            }}
+          />
+          <Route
+            exact
+            path={"/invoice"}
+            render={() => {
+              return <CreateInvoiceComponent />;
             }}
           />
         </Switch>
